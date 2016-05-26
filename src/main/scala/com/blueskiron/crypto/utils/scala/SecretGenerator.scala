@@ -1,7 +1,6 @@
 package com.blueskiron.crypto.utils.scala
 
 import java.security.Security
-import org.bouncycastle.jce.provider.BouncyCastleProvider
 import javax.crypto.KeyGenerator
 
 object SecretGenerator {
