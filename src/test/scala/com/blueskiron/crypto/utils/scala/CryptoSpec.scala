@@ -12,7 +12,7 @@ class CryptoSpec extends FlatSpec with Matchers {
   val secretSize = 64
 
   val secret = SecretGenerator.generateSecret(secretSize)
-  
+
   forAll(multipliers) { multiplier =>
     {
       //generate some payload
@@ -27,4 +27,18 @@ class CryptoSpec extends FlatSpec with Matchers {
     }
   }
 
+  "Digest of data" should "work" in {
+    val foo = "This is a message"
+    val digest = Crypto.digest(foo)
+    println(s"message: '$foo'\n with digest: '$digest'")
+    //TODO
+  }
+
+  "MAC digest of data" should "work" in {
+    val foo = "This is a secret message"
+    val key = SecretGenerator.generateSecret(32)
+    val digest = Crypto.mac(foo, secret)
+    println(s"message: '$foo'\n with MAC digest: '$digest'")
+  }
+  
 }
