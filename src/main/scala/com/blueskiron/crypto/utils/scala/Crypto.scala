@@ -125,10 +125,7 @@ object Crypto {
   }
 
   def mac(text: String, secret: String) = {
-    val random = SecureRandom.getInstance("SHA1PRNG");
-    val hmacSalt = new Array[Byte](20)
-    random.nextBytes(hmacSalt)
-    val hmacKey = createKey(secret, hmacSalt, 100000, 160)
+    val hmacKey = createKey(secret, new Array[Byte](10), 100000, 160)
     val hmacKeySpec = new SecretKeySpec(hmacKey, "HmacSHA512")
     val mac = Mac.getInstance("HmacSHA512")
     mac.init(hmacKeySpec)

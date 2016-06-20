@@ -20,7 +20,6 @@ class CryptoSpec extends FlatSpec with Matchers {
 
       "AES-CTR encryption" should s"work for a valid symmetric key: $secret and message length: ${message.length}" in {
         val cipherText = Crypto.encryptAES(message, secret)
-        println(s"decrypting: $cipherText")
         val decrypted = Crypto.decryptAES(cipherText, secret)
         message shouldBe decrypted
       }
@@ -29,16 +28,17 @@ class CryptoSpec extends FlatSpec with Matchers {
 
   "Digest of data" should "work" in {
     val foo = "This is a message"
-    val digest = Crypto.digest(foo)
-    println(s"message: '$foo'\n with digest: '$digest'")
-    //TODO
+    val digest1 = Crypto.digest(foo)
+    val digest2 = Crypto.digest(foo)
+    digest1 shouldBe digest2
   }
 
   "MAC digest of data" should "work" in {
     val foo = "This is a secret message"
     val key = SecretGenerator.generateSecret(32)
-    val digest = Crypto.mac(foo, secret)
-    println(s"message: '$foo'\n with MAC digest: '$digest'")
+    val digest1 = Crypto.mac(foo, secret)
+    val digest2 = Crypto.mac(foo, secret)
+    digest1 shouldBe digest2
   }
   
 }
