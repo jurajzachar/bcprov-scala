@@ -11,6 +11,9 @@ import javax.crypto.spec.IvParameterSpec
 import java.nio.charset.StandardCharsets
 import javax.crypto.Mac
 import java.util.Arrays
+import scala.util.Try
+import scala.util.Failure
+import scala.util.Success
 
 object Crypto {
 
@@ -21,7 +24,7 @@ object Crypto {
    */
   private def createKey(secret: String, salt: Array[Byte], iterations: Int, length: Int) = {
     val keySpec = new PBEKeySpec(secret.toCharArray(), salt, iterations, length)
-    val secretKeyFactory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA512");
+    val secretKeyFactory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
     secretKeyFactory.generateSecret(keySpec).getEncoded();
   }
 
@@ -70,7 +73,7 @@ object Crypto {
   /**
    * Decrypts given payload using AES-CRT with no padding and HMAC verification using provided secret.
    */
-  def decryptAES(payload: String, secret: String) = {
+  def decryptAES(payload: String, secret: String): Try[String] = {
     val in = Base64.getDecoder().decode(payload);
     // Check Minimum Length (ESALT (20) + HSALT (20) + HMAC (32))
     require(in.length > 72)
@@ -89,7 +92,7 @@ object Crypto {
 
     // Compare Computed HMAC vs Recovered HMAC
     if (!MessageDigest.isEqual(hmac, computedHmac)) {
-      throw new Exception("Recovered and computed hash not identical, aborting!")
+      Failure(new Exception("Recovered and computed hash not identical, aborting!"))
     } else {
       // HMAC Verification Passed
       // Regenerate Encryption Key using Recovered Salt (esalt)
@@ -102,7 +105,7 @@ object Crypto {
       val out = cipher.doFinal(encryptedPayload)
 
       // Return our Decrypted String
-      new String(out, StandardCharsets.UTF_8);
+      Success(new String(out, StandardCharsets.UTF_8));
     }
   }
 

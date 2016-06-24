@@ -4,6 +4,7 @@ import org.scalatest.FlatSpec
 import org.scalatest.Matchers
 import org.scalatest.prop.TableDrivenPropertyChecks.Table
 import org.scalatest.prop.TableDrivenPropertyChecks.forAll
+import scala.util.Success
 
 class CryptoSpec extends FlatSpec with Matchers {
 
@@ -21,7 +22,8 @@ class CryptoSpec extends FlatSpec with Matchers {
       "AES-CTR encryption" should s"work for a valid symmetric key: $secret and message length: ${message.length}" in {
         val cipherText = Crypto.encryptAES(message, secret)
         val decrypted = Crypto.decryptAES(cipherText, secret)
-        message shouldBe decrypted
+        decrypted.isSuccess shouldBe true
+        message shouldBe decrypted.get
       }
     }
   }
